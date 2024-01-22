@@ -18,15 +18,18 @@ import Feedback from './Pages/Feedback'
 import Credits from './Pages/Credits'
 import DonorPg from './Pages/DonorPg'
 import EmergencyCriteria from './Pages/EmergencyCriteria'
+import {io} from 'socket.io-client'
+import ChatBox from './Pages/ChatBox'
 
 function App() {
   
   const [mainState,setMainState]=useState(null) //{hospitalId:'@nri', token:''}
+  const [socket,setSocket]=useState(null) 
   async function validateToken(){
     let t= localStorage.getItem('bds_tok')
     if(t){
       try {
-        let k = await fetch(import.meta.env.VITE_SERVER_URL + '/validate-hsp', {
+        let k = await fetch(import.meta.env.VITE_SERVER_URL + '/validate-hospital', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${t}`,
@@ -36,7 +39,7 @@ function App() {
         )
         k = await k.json()
         if (k.msg == 'done') {
-          setMainState({hospitalId:k.hospitalId, location:k.location, token:t})
+          setMainState({hospitalId:k.hospitalId, hospitalLocation:k.hospitalLocation, token:t})
         }else 
         localStorage.removeItem('bds_tok')
       } catch (e) {
@@ -47,8 +50,28 @@ function App() {
   }
   
   useEffect(()=>{
-      validateToken()
+      validateToken()  
   },[])
+
+  useEffect(()=>{
+      if(socket){
+        socket.on('connect',(e)=>{
+          console.log('connected')
+        })
+        socket.on('msg',(e)=>{
+          console.log('received msg ',e)
+        })
+      }else if(mainState){
+        const s = io(import.meta.env.VITE_SERVER_URL, {
+          query:{
+            isDonor:false,
+              id:mainState.hospitalId
+          }
+      });
+        setSocket(s)
+      }
+  },[mainState,socket])
+
   return (
     <BrowserRouter>
     {mainState && <NavBar setMainState={setMainState} />}
@@ -57,8 +80,8 @@ function App() {
             {mainState && 
             <>
               <Route path='/new-patient' element={<PatientForm mainState={mainState}  />}></Route>
-            <Route path='/patient' element={<PatientData mainState={mainState}  />}></Route>
-            <Route path='/donor/:id' element={<DonorPg mainState={mainState}  />}></Route>
+            <Route path='/patient/:pid' element={<PatientData mainState={mainState}  />}></Route>
+            <Route path='/donor' element={<DonorPg mainState={mainState} socket={socket} />}></Route>
 
               <Route path='/events' element={<EventList mainState={mainState}  />}></Route>
               <Route path='/event/:id' element={<EventData mainState={mainState}  />}></Route>

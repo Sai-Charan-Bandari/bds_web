@@ -15,25 +15,24 @@ const Login = ({setMainState}) => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    setMainState({hospitalId:formData.id, token:'k.tok' })
-    localStorage.setItem('bds_tok','k.tok')
     // CHECK ALL FIELDS ARE COMPLETE
-    // try{
-    //     let k =await fetch(import.meta.env.VITE_SERVER_URL+'/login-hsp',{
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json', 
-    //       },
-    //       body: JSON.stringify(formData),
-    //     })
-    //     k=await k.json()
-    //     if(k.msg=='done'){
-    //       setMainState({hospitalId:formData.id, token:k.tok })
-    //       localStorage.setItem('bds_tok',k.tok)
-    //     }
-    //   }catch(e){
-    //     console.log('error in logging in ',e)
-    //   }
+    try{
+        let k =await fetch(import.meta.env.VITE_SERVER_URL+'/login-hospital',{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', 
+          },
+          body: JSON.stringify(formData),
+        })
+        k=await k.json()
+        console.log('hso login ',k)
+        if(k.msg=='done'){
+          setMainState({hospitalId:formData.id, hospitalLocation:k.hospitalLocation, token:k.tok })
+          localStorage.setItem('bds_tok',k.tok)
+        }
+      }catch(e){
+        console.log('error in logging in ',e)
+      }
   };
 
   return (

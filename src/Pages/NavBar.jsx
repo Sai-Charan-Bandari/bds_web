@@ -6,7 +6,6 @@ function NavBar({setMainState}) {
     <div>NavBar
         <div style={{display:'flex',flexDirection:'row'}}>
         <Link to={'/'} >'Requests' </Link>
-        <Link to={'/new-patient'} >'New Request' </Link>
         <Link to={'/events'} >'Events' </Link>
         <Link to={'/appointments'} >'Appointments' </Link>
         <Link to={'/profile'} >'Profile' </Link>

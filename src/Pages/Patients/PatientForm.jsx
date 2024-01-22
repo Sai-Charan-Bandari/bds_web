@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function PatientForm({mainState}) {
+  let nav=useNavigate()
   let [p,setP]=useState({
-    name:'kiran',
-    age:21,
-    bloodGroup:'o+',
+    name:'',
+    age:0,
+    bloodGroup:'O+',
     gender:true,
-    guardianPhoneNumber:97857934,
-    hospitalId:'@apollo',
-    hospitalLocation: mainState.location ,// [82.2315467,17.00165],
+    guardianPhoneNumber:"",
+    hospitalId:mainState.hospitalId,
+    hospitalLocation: mainState.hospitalLocation ,// [82.2315467,17.00165],
     emergency:false,
-    problemDescription:'prob',
-    caseDetails:'case',
+    problemDescription:'',
+    caseDetails:'',
     documentLinks:[]
 })
 
@@ -27,14 +29,22 @@ const handleChange = (e) => {
 const postPatientData = async(e) => {
   e.preventDefault();
   console.log(p);
+  try{
     let k =await fetch(import.meta.env.VITE_SERVER_URL+'/post-donation-request',{
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${mainState.token}`,
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(patient1)
+      body: JSON.stringify(p)
     })
     k=await k.json()
+    console.log(k)
+    if(k.msg=='done')
+      nav(-1)
+  }catch(e){
+    alert('err in posting')
+  }
 };
 
 return (
@@ -53,13 +63,23 @@ return (
 
     <label>
       Blood Group:
-      <input type="text" name="bloodGroup" value={p.bloodGroup} onChange={handleChange} />
+      <select name="bloodGroup" id="" value={p.bloodGroup} onChange={handleChange}>
+  <option value="O+">O+</option>
+  <option value="A+">A+</option>
+  <option value="B+">B+</option>
+  <option value="AB+">AB+</option>
+  <option value="O-">O-</option>
+  <option value="A-">A-</option>
+  <option value="B-">B-</option>
+  <option value="AB-">AB-</option>
+      </select>
     </label>
     <br />
 
     <label>
       Gender:
-      <input type="checkbox" name="gender" checked={p.gender} onChange={handleChange} />
+      <input type="checkbox"   checked={p.gender} onChange={()=>setP({...p,gender:true})} /> Male
+      <input type="checkbox"  checked={!p.gender} onChange={()=>setP({...p,gender:false})}  /> Female
     </label>
     <br />
 
