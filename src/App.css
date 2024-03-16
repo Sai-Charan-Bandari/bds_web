@@ -1,3 +1,30 @@
 a{
   display: block;
 }
+
+.event-card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.event-card h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.event-card p {
+  margin-bottom: 10px;
+}
+
+.image-container {
+  margin-bottom: 20px;
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}

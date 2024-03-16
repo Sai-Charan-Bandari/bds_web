@@ -14,7 +14,9 @@ function PatientForm({mainState}) {
     emergency:false,
     problemDescription:'',
     caseDetails:'',
-    documentLinks:[]
+    documentLinks:[],
+    noOfUnitsRequired:1,
+    donationType:0
 })
 
 const handleChange = (e) => {
@@ -27,6 +29,8 @@ const handleChange = (e) => {
 };
 
 const postPatientData = async(e) => {
+  // FORM VALIDATION IS MUST 
+  // CHECK AGE!=0..., LIMIT NO.OF REQ UNITS
   e.preventDefault();
   console.log(p);
   try{
@@ -135,6 +139,27 @@ return (
     </label>
     <br />
 
+    <label>
+      No. of units required:
+      <input
+        type="number"
+        name="noOfUnitsRequired"
+        value={p.noOfUnitsRequired}
+        onChange={handleChange}
+      />
+    </label>
+    <br />
+
+
+    <label>
+      Donation Type:
+      <select name="donationType" id="" value={p.donationType} onChange={handleChange}>
+  <option value={0}>Whole Blood</option>
+  <option value={1}>Platelets</option>
+  <option value={2}>Plasma</option>
+      </select>
+    </label>
+    <br />
 
     <div><button  type="submit">post donation request</button></div>
   </form>

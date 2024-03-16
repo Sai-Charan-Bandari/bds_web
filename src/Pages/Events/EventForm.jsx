@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function EventForm({mainState}) {
+  let nav=useNavigate()
   let [p,setP]=useState({
     hospitalId:mainState.hospitalId,
     name:'',
     description:'',
     startDate:new Date(new Date().getTime()+86400000), //tomorrow
-    noOfDays: 0,
+    endDate: new Date(new Date().getTime()+86400000),
     address:'',
     imgURL:'',
+    timings:["10:00","17:00"],
+    coordinates:[0, 0]
 })
 let [accept,setAccept]=useState(false)
+let [coord,toggleCoord]=useState(true)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,8 +40,14 @@ let [accept,setAccept]=useState(false)
       })
       k=await k.json()
       console.log(k)
-    }catch(e){
-      alert('err in posting')
+    if(k.msg=="done"){
+      alert("event created successfully")
+      nav(-1)
+      return
+    }
+    alert("error in event creation")
+  }catch(e){
+      alert("error in event creation")
     }
   };
 
@@ -58,15 +69,25 @@ let [accept,setAccept]=useState(false)
     <label>
       Start Date:  NOT WORKING CORRCTLy
       {/* NOT WORKING CORRCTLY */}
-      <input type="datetime-local" name="startDate" id=""  value={(""+p.startDate.toISOString()).substring(0,16)} onChange={(e)=>setP({...p,startDate:new Date(e.target.value)})}/>
+      <input type="date" name="startDate" id=""  value={(""+p.startDate.toISOString()).substring(0,10)} onChange={(e)=>setP({...p,startDate:new Date(e.target.value)})}/>
     </label>
     <br />
 
     <label>
-      No of days:
-      <input type="number" name="noOfDays" value={p.noOfDays} onChange={handleChange} />
+      End Date: (inclusive)  NOT WORKING CORRCTLy
+      {/* NOT WORKING CORRCTLY */}
+      <input type="date" name="endDate" id=""  value={(""+p.endDate.toISOString()).substring(0,10)} onChange={(e)=>{
+        // console.log(e.target.value)
+        // console.log(new Date(e.target.value).getTime() )
+        // console.log(p.startDate.getTime() )
+        if(new Date(e.target.value).getTime() >= new Date(p.startDate.toISOString().substring(0,10)))
+        setP({...p,endDate:new Date(e.target.value)})
+      }}/>
     </label>
     <br />
+
+   
+    <div>No of days = {(new Date(p.endDate.toISOString().substring(0,10)) - new Date(p.startDate.toISOString().substring(0,10)))/86400000 + 1}</div>
 
     <label>
       Address:
@@ -83,6 +104,40 @@ let [accept,setAccept]=useState(false)
         onChange={handleChange}
       />
     </label>
+    <br />
+
+    Timings:
+          <label>
+          Start time
+            <input type="time"  value={p.timings[0]} onChange={(e)=>setP({...p,timings:[e.target.value,p.timings[1]]})} required />
+          </label>
+          <label>
+          End time
+            <input type="time"  value={p.timings[1]} onChange={(e)=>setP({...p,timings:[formData.timings[0],e.target.value]})} required />
+          </label>
+    <br />
+
+    
+    Location :
+            <label>
+              Use your registered location 
+            <input type="checkbox" onChange={()=>toggleCoord(!coord)} checked={coord} />
+            </label>
+          {
+            !coord &&
+            <div>
+            Enter venue coordinates : 
+            <label>
+          Longitude
+            <input type="number" name="coordinates" value={p.coordinates[0]} onChange={(e)=>setP({...p,coordinates:[e.target.value,p.coordinates[1]]})} required />
+          </label>
+          <label>
+          Longitude
+            <input type="number" name="coordinates" value={p.coordinates[1]} onChange={(e)=>setP({...p,coordinates:[formData.coordinates[0],e.target.value]})} required />
+          </label>
+            </div>
+            
+          }
     <br />
 
     <label>

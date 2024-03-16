@@ -246,12 +246,20 @@ function PatientData({ mainState }) {
                 'Authorization': `Bearer ${mainState.token}`,
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({hospitalId:mainState.hospitalId, patientId:p._id, email:email})
+              body: JSON.stringify({hospitalId:mainState.hospitalId, patientId:p._id, noOfUnitsRequired:p.noOfUnitsRequired ,noOfUnitsDonated:p.noOfUnitsDonated, donationType:p.donationType , email:email})
             })
             k = await k.json()
             if(k.msg=='done'){
+              if(p.noOfUnitsDonated+1==p.noOfUnitsRequired){
               alert('Completed Request')
               nav(-1)
+              }
+              else{
+              alert('Added new donation')
+                let n = {...mainP, noOfUnitsDonated:mainP.noOfUnitsDonated+1}
+                setMainP(n)
+                setP(n)
+              }
             }
             console.log(k)
           } catch (e) {
