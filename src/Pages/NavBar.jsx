@@ -51,6 +51,7 @@ function NavBar({ setMainState }) {
         <Link to={'/feedback'} style={{ ...navbarLinkStyle, ...oddNavbarLinkStyle }}>Feedback</Link>
         <Link to={'/credits'} style={{ ...navbarLinkStyle, ...evenNavbarLinkStyle }}>Credits</Link>
         <Link to={'/emergency-criteria'} style={{ ...navbarLinkStyle, ...oddNavbarLinkStyle }}>Criteria for Emergency Cases</Link>
+        <Link to={'/map'} style={{ ...navbarLinkStyle, ...oddNavbarLinkStyle }}>map</Link>
         <button style={logoutButtonStyle} onClick={() => {
           localStorage.removeItem('bds_tok');
           setMainState(null);

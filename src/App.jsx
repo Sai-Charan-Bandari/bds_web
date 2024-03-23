@@ -20,6 +20,7 @@ import DonorPg from './Pages/DonorPg'
 import EmergencyCriteria from './Pages/EmergencyCriteria'
 import {io} from 'socket.io-client'
 import ChatBox from './Pages/ChatBox'
+import Map from './Pages/Map'
 
 function App() {
   
@@ -62,7 +63,10 @@ function App() {
           console.log('received msg ',e)
         })
       }else if(mainState){
-        const s = io(import.meta.env.VITE_SERVER_URL, {
+        // socket connection needs base url
+        let url = ''+import.meta.env.VITE_SERVER_URL
+        url = url.substring(0,url.length-4)
+        const s = io(url, {
           query:{
             isDonor:false,
               id:mainState.hospitalId
@@ -80,7 +84,7 @@ function App() {
             {mainState && 
             <>
               <Route path='/new-patient' element={<PatientForm mainState={mainState}  />}></Route>
-            <Route path='/patient/:pid' element={<PatientData mainState={mainState}  />}></Route>
+            <Route path='/patient/:pid' element={<PatientData mainState={mainState} socket={socket}  />}></Route>
             <Route path='/donor' element={<DonorPg mainState={mainState} socket={socket} />}></Route>
 
               <Route path='/events' element={<EventList mainState={mainState}  />}></Route>
@@ -97,6 +101,7 @@ function App() {
               <Route path='/credits' element={<Credits mainState={mainState}  />}></Route>
               <Route path='/emergency-criteria' element={<EmergencyCriteria mainState={mainState}  />}></Route>
 
+              <Route path='/map' element={<Map />}></Route>
             </>
             }
             <Route path='*' element={<PgNotFound />}></Route>

@@ -29,6 +29,41 @@ let [coord,toggleCoord]=useState(true)
   const postEventData = async(e) => {
     e.preventDefault();
     console.log(p);
+    //VALIDATION
+if((new Date(p.endDate.toISOString().substring(0,10)) - new Date(p.startDate.toISOString().substring(0,10)))/86400000 <0){
+  alert("invalid dates")
+  return
+}
+if(p.name.trim()==''){
+  alert("invalid name")
+  return
+}
+if(p.description.trim()==''){
+  alert("invalid description")
+  return
+}
+if(p.address.trim()==''){
+  alert("invalid address")
+  return
+}
+if(p.imgURL.trim()==''){
+  alert("invalid imgURL")
+  return
+}
+if(parseInt(p.timings[0].substring(0,2))<9 || parseInt(p.timings[1].substring(0,2))>18){
+  alert("timings should be between 9AM to 6PM")
+  return
+}
+if(parseInt(p.timings[0].substring(0,2)) - parseInt(p.timings[1].substring(0,2)) >=0){
+  alert("invalid timings selected")
+  return
+}
+if(p.coordinates[0]==0 || p.coordinates[1]==0){
+  alert("invalid coordinates")
+  return
+}
+
+
     try{
       let k =await fetch(import.meta.env.VITE_SERVER_URL+'/create-event',{
         method: 'POST',
@@ -113,7 +148,7 @@ let [coord,toggleCoord]=useState(true)
           </label>
           <label>
           End time
-            <input type="time"  value={p.timings[1]} onChange={(e)=>setP({...p,timings:[formData.timings[0],e.target.value]})} required />
+            <input type="time"  value={p.timings[1]} onChange={(e)=>setP({...p,timings:[p.timings[0],e.target.value]})} required />
           </label>
     <br />
 
@@ -133,7 +168,7 @@ let [coord,toggleCoord]=useState(true)
           </label>
           <label>
           Longitude
-            <input type="number" name="coordinates" value={p.coordinates[1]} onChange={(e)=>setP({...p,coordinates:[formData.coordinates[0],e.target.value]})} required />
+            <input type="number" name="coordinates" value={p.coordinates[1]} onChange={(e)=>setP({...p,coordinates:[p.coordinates[0],e.target.value]})} required />
           </label>
             </div>
             
